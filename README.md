@@ -8,7 +8,7 @@ This micro-app lets you measure your brain's reaction time through a short inter
 
 ## 🔗 Live Demo
 
-[Click here to try it now] (https://your-github-username.github.io/brain-age-test)  
+[Click here to try it now] (https://thevikramsinha.github.io/brain-test/)
 
 ---
 
