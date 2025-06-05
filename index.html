@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Old is Your Brain?</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white">
+  <section id="landing" class="min-h-screen flex flex-col justify-center items-center text-center px-4">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4">🧠 How Old is Your Brain?</h1>
+    <p class="text-lg md:text-xl text-gray-300 max-w-xl mb-8">
+      A fun, fast, and freakishly accurate reflex test. Complete 5 quick taps and get your mental age instantly.
+    </p>
+    <button onclick="startTest()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 text-lg rounded shadow-md transition">Take the Test</button>
+  </section>
+
+  <section id="test-section" class="hidden min-h-screen flex flex-col justify-center items-center px-4">
+    <div class="max-w-lg w-full p-6 bg-white text-gray-900 shadow-lg rounded-lg text-center">
+      <h2 class="text-2xl font-bold mb-2">React Fast!</h2>
+      <p class="mb-4 text-sm text-gray-600">Tap as soon as the box turns <span class="font-bold">green</span>.</p>
+      <div id="reaction-box" class="w-full h-40 bg-gray-300 rounded mb-4 flex items-center justify-center cursor-pointer">Wait...</div>
+      <p id="feedback" class="text-sm text-gray-700"></p>
+    </div>
+  </section>
+
+  <section id="result-section" class="hidden min-h-screen flex flex-col justify-center items-center px-4">
+    <div class="max-w-lg w-full p-6 bg-white text-gray-900 shadow-lg rounded-lg text-center">
+      <h2 class="text-2xl font-semibold">Your Brain Age is:</h2>
+      <div id="brain-age" class="text-4xl font-bold text-green-600 my-4">--</div>
+      <p class="text-sm text-gray-500">(Based on your average reaction speed)</p>
+      <button onclick="resetTest()" class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Try Again</button>
+    </div>
+  </section>
+
+  <script>
+    const landing = document.getElementById('landing');
+    const testSection = document.getElementById('test-section');
+    const resultSection = document.getElementById('result-section');
+    const reactionBox = document.getElementById('reaction-box');
+    const feedback = document.getElementById('feedback');
+    const brainAgeDisplay = document.getElementById('brain-age');
+
+    let startTime, endTime, timeoutId, reactionTimes = [], testCount = 0;
+
+    function startTest() {
+      landing.classList.add('hidden');
+      testSection.classList.remove('hidden');
+      nextRound();
+    }
+
+    function nextRound() {
+      feedback.textContent = '';
+      reactionBox.style.backgroundColor = '#D1D5DB';
+      reactionBox.textContent = 'Wait...';
+      reactionBox.onclick = earlyClick;
+      timeoutId = setTimeout(() => {
+        startTime = new Date().getTime();
+        reactionBox.style.backgroundColor = '#34D399';
+        reactionBox.textContent = 'Click!';
+        reactionBox.onclick = recordReaction;
+      }, Math.random() * 3000 + 2000);
+    }
+
+    function earlyClick() {
+      clearTimeout(timeoutId);
+      feedback.textContent = 'Too soon! Try again.';
+      setTimeout(nextRound, 1000);
+    }
+
+    function recordReaction() {
+      endTime = new Date().getTime();
+      const reactionTime = endTime - startTime;
+      reactionTimes.push(reactionTime);
+      testCount++;
+      feedback.textContent = `Reaction Time: ${reactionTime} ms`;
+      if (testCount >= 5) {
+        showResult();
+      } else {
+        setTimeout(nextRound, 1000);
+      }
+    }
+
+    function showResult() {
+      testSection.classList.add('hidden');
+      resultSection.classList.remove('hidden');
+      const avg = Math.round(reactionTimes.reduce((a,b) => a + b, 0) / reactionTimes.length);
+      let brainAge;
+      if (avg < 200) brainAge = '15';
+      else if (avg < 250) brainAge = '20';
+      else if (avg < 300) brainAge = '30';
+      else if (avg < 350) brainAge = '40';
+      else if (avg < 450) brainAge = '50';
+      else brainAge = '60+';
+      brainAgeDisplay.textContent = brainAge;
+    }
+
+    function resetTest() {
+      reactionTimes = [];
+      testCount = 0;
+      resultSection.classList.add('hidden');
+      landing.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
